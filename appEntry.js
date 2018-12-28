@@ -1,20 +1,22 @@
 const Koa    = require('koa');
+const fs     = require('fs');
 const Router = require('koa-router');
 
 const router    = Router();
 router.get('/', async(ctx, next) => {
-  ctx.response.body = "hello";
+    ctx.response.type = 'html';
+    ctx.response.body = fs.createReadStream('./resource/page.html');
+});
+router.post('/', async(ctx, next) => {
+   ctx.response.body = 'good';
 });
 
 const app    = new Koa();
 app.use(router.routes());
 app.listen(3000);
 
-
-
-
-
-
+console.log('service is running...');
+/*
 
 const Inquirer  = require('./Inquirer/inquirer');
 const Generator = require('./Generator/generator');
@@ -24,7 +26,7 @@ const seeds = '卓美';//美宫蝶云万如双致简子伊天尹星秋梦兰长�
 const inquirer  = new Inquirer();
 const generator = new Generator();
 inquirer.inquire(generator.generate(seeds), type);
-
+*/
 
 
 

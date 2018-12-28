@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>Hello React!</title>
+    <script src="https://cdn.staticfile.org/react/16.4.0/umd/react.development.js"></script>
+    <script src="https://cdn.staticfile.org/react-dom/16.4.0/umd/react-dom.development.js"></script>
+    <script src="https://cdn.staticfile.org/babel-standalone/6.26.0/babel.min.js"></script>
+</head>
+<body>
+
+<div id="example"></div>
+<script type="text/babel">
+    function tick() {
+        const element = (
+            <div>
+                <h1>Hello, world!</h1>
+                <h2>现在是 {new Date().toLocaleTimeString()}.</h2>
+            </div>
+        );
+        ReactDOM.render(
+            element,
+            document.getElementById('example')
+        );
+    }
+
+    setInterval(tick, 1000);
+</script>
+
+</body>
+</html>
+
+
+class TodoApp extends React.Component {
+    constructor(props) {
+    super(props);
+    this.state = { items: [], text: '' };
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+}
+
+    render() {
+        return (
+<div>
+    <h3>TODO</h3>
+    <TodoList items={this.state.items} />
+    <form onSubmit={this.handleSubmit}>
+        <label htmlFor="new-todo">
+            What needs to be done?
+        </label>
+        <input
+                id="new-todo"
+                onChange={this.handleChange}
+                value={this.state.text}
+        />
+        <button>
+            Add #{this.state.items.length + 1}
+        </button>
+    </form>
+</div>
+);
+}
+
+handleChange(e) {
+this.setState({ text: e.target.value });
+}
+
+handleSubmit(e) {
+e.preventDefault();
+if (!this.state.text.length) {
+return;
+}
+const newItem = {
+text: this.state.text,
+id: Date.now()
+};
+this.setState(state => ({
+items: state.items.concat(newItem),
+text: ''
+}));
+}
+}
+
+class TodoList extends React.Component {
+render() {
+return (
+<ul>
+    {this.props.items.map(item => (
+    <li key={item.id}>{item.text}</li>
+    ))}
+</ul>
+);
+}
+}
+
+ReactDOM.render(<TodoApp />, mountNode);
