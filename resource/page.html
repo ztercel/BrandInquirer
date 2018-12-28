@@ -11,86 +11,49 @@
 
 <div id="example"></div>
 <script type="text/babel">
-    function tick() {
-        const element = (
+class TodoApp extends React.Component {
+    constructor(props) {
+        super(props);
+        /*this.type = { text: 'brand' };*/
+        this.state = { text: '', value: '' };
+
+        this.handleChange = this.handleChange.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
+    }
+
+    render() {
+        return (
             <div>
-                <h1>Hello, world!</h1>
-                <h2>现在是 {new Date().toLocaleTimeString()}.</h2>
+                <h3>商标查询</h3>
+                <form onSubmit={this.handleSubmit}>
+                    <p><label htmlFor="new-todo">选择类型</label>
+                        <select id="select" value={this.state.value} onChange={this.handleChange}>
+                            <option value="brand">商标名</option>
+                            <option value="words">候选词</option>
+                        </select>
+                    </p>
+                    <p><textarea id="new-todo" rows="10" cols="100" onChange={this.handleChange} value={this.state.text}/></p>
+                    <button>查询</button>
+                </form>
             </div>
-        );
-        ReactDOM.render(
-            element,
-            document.getElementById('example')
         );
     }
 
-    setInterval(tick, 1000);
+    handleChange(e) {
+        switch (e.target.id) {
+            case 'new-todo':    this.setState({ text: e.target.value }); break;
+            case 'select':      this.setState({ value: e.target.value }); break;
+        }
+    }
+
+    handleSubmit(e) {
+        alert(this.state.text + "  " + this.state.value);
+    }
+}
+
+ReactDOM.render(<TodoApp />, document.getElementById('example'));
 </script>
 
 </body>
 </html>
 
-
-class TodoApp extends React.Component {
-    constructor(props) {
-    super(props);
-    this.state = { items: [], text: '' };
-    this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
-}
-
-    render() {
-        return (
-<div>
-    <h3>TODO</h3>
-    <TodoList items={this.state.items} />
-    <form onSubmit={this.handleSubmit}>
-        <label htmlFor="new-todo">
-            What needs to be done?
-        </label>
-        <input
-                id="new-todo"
-                onChange={this.handleChange}
-                value={this.state.text}
-        />
-        <button>
-            Add #{this.state.items.length + 1}
-        </button>
-    </form>
-</div>
-);
-}
-
-handleChange(e) {
-this.setState({ text: e.target.value });
-}
-
-handleSubmit(e) {
-e.preventDefault();
-if (!this.state.text.length) {
-return;
-}
-const newItem = {
-text: this.state.text,
-id: Date.now()
-};
-this.setState(state => ({
-items: state.items.concat(newItem),
-text: ''
-}));
-}
-}
-
-class TodoList extends React.Component {
-render() {
-return (
-<ul>
-    {this.props.items.map(item => (
-    <li key={item.id}>{item.text}</li>
-    ))}
-</ul>
-);
-}
-}
-
-ReactDOM.render(<TodoApp />, mountNode);
