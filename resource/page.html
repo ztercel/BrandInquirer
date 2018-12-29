@@ -11,47 +11,114 @@
 
 <div id="example"></div>
 <script type="text/babel">
-class TodoApp extends React.Component {
-    constructor(props) {
-        super(props);
-        /*this.type = { text: 'brand' };*/
-        this.state = { text: '', value: '' };
+    class BrandForm extends React.Component {
+        constructor(props) {
+            super(props);
+            this.state = { text: '', type: 'brand', result: '', items: []};
 
-        this.handleChange = this.handleChange.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
-    }
+            this.handleChange = this.handleChange.bind(this);
+            this.handleSubmit = this.handleSubmit.bind(this);
+        }
+        getRawMarkup() {
 
-    render() {
-        return (
-            <div>
-                <h3>商标查询</h3>
-                <form onSubmit={this.handleSubmit}>
-                    <p><label htmlFor="new-todo">选择类型</label>
-                        <select id="select" value={this.state.value} onChange={this.handleChange}>
-                            <option value="brand">商标名</option>
-                            <option value="words">候选词</option>
-                        </select>
-                    </p>
-                    <p><textarea id="new-todo" rows="10" cols="100" onChange={this.handleChange} value={this.state.text}/></p>
-                    <button>查询</button>
-                </form>
-            </div>
-        );
-    }
+        }
 
-    handleChange(e) {
-        switch (e.target.id) {
-            case 'new-todo':    this.setState({ text: e.target.value }); break;
-            case 'select':      this.setState({ value: e.target.value }); break;
+        backListItem(){
+            return (
+                <table border="1" style={{width:'1000px'}}>
+                {
+                    this.state.items.map((e,idx)=>(
+                        <tr key={idx}>
+                            <td style={{fontSize:'20px', fontWeight: '700', height: 22 * e.items.length + 'px', lineHeight: 22 * e.items.length + 'px', textAlign: 'center' }}>{e.name}</td>
+                            <td>
+                                {
+                                    e.items.map((obj)=>(
+                                        <div style={{display:'flex'}}>
+                                            <div style={{flex:1}}>注册状态：<span style={{color: (obj.status == '未注册') ? 'green' : 'red'}}>{obj.status} </span></div>
+                                            <div style={{flex:1}}>注册公司: {obj.company}</div>
+                                            <div style={{flex:1}}>注册编号：{obj.no}</div>
+                                        </div>
+                                    ))
+                                }
+                            </td>
+                        </tr>
+                    ))
+                }
+                </table>
+            )
+        }
+
+        render() {
+            return (
+                <div>
+                    <h3>商标查询</h3>
+                    <form onSubmit={this.handleSubmit} method="post" action >
+                        <p><label htmlFor="new-todo">选择类型</label>
+                            <select id="type" onChange={this.handleChange}>
+                                <option value="brand">商标名</option>
+                                <option value="words">候选词</option>
+                            </select>
+                        </p>
+                        <p><textarea id="text" rows="10" cols="100" onChange={this.handleChange}/></p>
+                        <button>查询</button>
+                        <div id = 'brands'>test</div>
+                        {this.backListItem()}
+                    </form>
+                </div>
+            );
+        }
+
+        handleChange(e) {
+            switch (e.target.id) {
+                case 'type':    this.setState({ type: e.target.value }); break;
+                case 'text':    this.setState({ text:  e.target.value }); break;
+            }
+        }
+        generate(seeds) {
+            let names = [];
+            //seeds = _.uniq(seeds);
+            for (var head of seeds) {
+                for (var tail of seeds) {
+                    names.push(head + tail);
+                }
+            }
+
+            return names;
+        }
+
+        handleSubmit(e) {
+            e.preventDefault();
+            switch (this.state.type) {
+
+            }
+
+            var node=document.getElementById('brands');
+             var items = this.generate('在国有');
+             console.log(items);
+
+             var items = [ {name: '没没', items: [{company: 'ddd', no:'1212', status: '注册'}] },
+                 {name: '声所', items: [{company: 'ddd', no:'1212', status: '未注册'}, {company: 'cccc', no:'1212', status: '注册'}] }];
+             this.setState({items});
+/*
+            var textnode=document.createTextNode(data);
+            var entNode = document.createElement('br');
+            node.appendChild(entNode);
+            node.appendChild(textnode);
+*/
+            fetch(`http://localhost:3000/`,{
+                method: 'POST'
+            }).then(res => res.text()).then(
+                (data) => {
+                    var node=document.getElementById('brands');
+                    var textnode=document.createTextNode(data);
+                    var entNode = document.createElement('br');
+                    node.appendChild(entNode);
+                    node.appendChild(textnode);
+                    console.log(data);
+                });
         }
     }
-
-    handleSubmit(e) {
-        alert(this.state.text + "  " + this.state.value);
-    }
-}
-
-ReactDOM.render(<TodoApp />, document.getElementById('example'));
+    ReactDOM.render(<BrandForm />, document.getElementById('example'));
 </script>
 
 </body>

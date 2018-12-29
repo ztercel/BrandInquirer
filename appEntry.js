@@ -9,6 +9,8 @@ router.get('/', async(ctx, next) => {
 });
 router.post('/', async(ctx, next) => {
    ctx.response.body = 'good';
+
+   console.log('goodddddd');
 });
 
 const app    = new Koa();
@@ -16,8 +18,8 @@ app.use(router.routes());
 app.listen(3000);
 
 console.log('service is running...');
-/*
 
+/*
 const Inquirer  = require('./Inquirer/inquirer');
 const Generator = require('./Generator/generator');
 
@@ -27,7 +29,6 @@ const inquirer  = new Inquirer();
 const generator = new Generator();
 inquirer.inquire(generator.generate(seeds), type);
 */
-
 
 
 
