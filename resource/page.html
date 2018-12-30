@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8" />
-    <title>Hello React!</title>
+    <title>商标查询</title>
     <script src="https://cdn.staticfile.org/react/16.4.0/umd/react.development.js"></script>
     <script src="https://cdn.staticfile.org/react-dom/16.4.0/umd/react-dom.development.js"></script>
     <script src="https://cdn.staticfile.org/babel-standalone/6.26.0/babel.min.js"></script>
@@ -14,32 +14,30 @@
     class BrandForm extends React.Component {
         constructor(props) {
             super(props);
-            this.state = { text: '', type: 'brand', result: '', items: []};
+            this.state = { text: '', type: 'brand', category: '1', categoryName: '', items: [],  result: 0,  time: 0};
 
             this.handleChange = this.handleChange.bind(this);
             this.handleSubmit = this.handleSubmit.bind(this);
         }
-        getRawMarkup() {
 
-        }
-
-        backListItem(){
+        backListItem() {
             return (
-                <table border="1" style={{width:'1000px'}}>
+                <table border="1" style={{width:'1600px'}}>
                 {
                     this.state.items.map((e,idx)=>(
                         <tr key={idx}>
-                            <td style={{fontSize:'20px', fontWeight: '700', height: 22 * e.items.length + 'px', lineHeight: 22 * e.items.length + 'px', textAlign: 'center' }}>{e.name}</td>
+                            <th style={{fontSize:'20px', fontWeight: '700', height: 22 * e.items.length + 'px', lineHeight: 22 * e.items.length + 'px', textAlign: 'center' }}>{(idx + 1) + " " + e.name}</th>
                             <td>
-                                {
-                                    e.items.map((obj)=>(
-                                        <div style={{display:'flex'}}>
-                                            <div style={{flex:1}}>注册状态：<span style={{color: (obj.status == '未注册') ? 'green' : 'red'}}>{obj.status} </span></div>
-                                            <div style={{flex:1}}>注册公司: {obj.company}</div>
-                                            <div style={{flex:1}}>注册编号：{obj.no}</div>
-                                        </div>
-                                    ))
-                                }
+                            {
+                                e.items.map((obj) => (
+                                    <div style={{display: 'flex'}}>
+                                        <div style={{flex: 1}}>注册状态：<span style={{color: (obj.process  == '已注册') ? 'red' : (obj.process == '未注册') ? 'green'  : 'orange'}}>{obj.process} </span></div>
+                                        <div style={{flex: 1}}>注册类型: {obj.clsname}</div>
+                                        <div style={{flex: 1}}>注册编号：{obj.regno}</div>
+                                        <div style={{flex: 1}}>注册公司: {obj.applynamecn}</div>
+                                    </div>)
+                                )
+                            }
                             </td>
                         </tr>
                     ))
@@ -48,20 +46,76 @@
             )
         }
 
+        getBrandCategory() {
+            return (
+                <select id="category" onChange={this.handleChange}>
+                    <option value='1'>1类-化工原料</option>
+                    <option value='2'>2类-涂料涂剂</option>
+                    <option value='3'>3类-日化用品</option>
+                    <option value='4'>4类-燃料石化</option>
+                    <option value='5'>5类-药品药物</option>
+                    <option value='6'>6类-五金制品</option>
+                    <option value='7'>7类-机械设备</option>
+                    <option value='8'>8类-手动工具</option>
+                    <option value='9'>9类-科学仪器具</option>
+                    <option value='10'>10类-医疗器械</option>
+                    <option value='11'>11类-电器产品</option>
+                    <option value='12'>12类-运载工具</option>
+                    <option value='13'>13类-军火烟火</option>
+                    <option value='14'>14类-首饰钟表</option>
+                    <option value='15'>15类-乐器配件</option>
+                    <option value='16'>16类-办公用品</option>
+                    <option value='17'>17类-橡胶制品</option>
+                    <option value='18'>18类-皮包伞杖</option>
+                    <option value='19'>19类-建筑材料</option>
+                    <option value='20'>20类-非金制品</option>
+                    <option value='21'>21类-家用器具</option>
+                    <option value='22'>22类-绳网袋蓬</option>
+                    <option value='23'>23类-绵纱丝线</option>
+                    <option value='24'>24类-纺织用品</option>
+                    <option value='25'>25类-穿戴用品</option>
+                    <option value='26'>26类-修边配饰</option>
+                    <option value='27'>27类-垫铺用品</option>
+                    <option value='28'>28类-体娱用品</option>
+                    <option value='29'>29类-菜品原料</option>
+                    <option value='30'>30类-便食调料</option>
+                    <option value='31'>31类-农林生鲜</option>
+                    <option value='32'>32类-啤酒饮料</option>
+                    <option value='33'>33类-红酒白酒</option>
+                    <option value='34'>34类-烟草烟具</option>
+                    <option value='35'>35类-广告商务</option>
+                    <option value='36'>36类-金融物管</option>
+                    <option value='37'>37类-建筑维修</option>
+                    <option value='38'>38类-电信通讯</option>
+                    <option value='39'>39类-运储旅行</option>
+                    <option value='40'>40类-加工处理</option>
+                    <option value='41'>41类-教育娱乐</option>
+                    <option value='42'>42类-研究设计</option>
+                    <option value='43'>43类-吃住服务</option>
+                    <option value='44'>44类-医疗美容</option>
+                    <option value='45'>45类-法律安全</option>
+                </select>
+            )
+        }
+
         render() {
             return (
                 <div>
                     <h3>商标查询</h3>
-                    <form onSubmit={this.handleSubmit} method="post" action >
-                        <p><label htmlFor="new-todo">选择类型</label>
+                    <form onSubmit={this.handleSubmit} method="post">
+                        <p> <label htmlFor="new">商标类别 </label><span ></span>
+                            {this.getBrandCategory()}
+                            <label htmlFor="new-todo">  选择类型  </label>
                             <select id="type" onChange={this.handleChange}>
                                 <option value="brand">商标名</option>
                                 <option value="words">候选词</option>
                             </select>
                         </p>
+
                         <p><textarea id="text" rows="10" cols="100" onChange={this.handleChange}/></p>
                         <button>查询</button>
-                        <div id = 'brands'>test</div>
+                        <div id='result'>查询结果: {this.state.count}</div>
+                        <div id='time'>累积用长: {this.state.time}秒</div>
                         {this.backListItem()}
                     </form>
                 </div>
@@ -70,15 +124,35 @@
 
         handleChange(e) {
             switch (e.target.id) {
-                case 'type':    this.setState({ type: e.target.value }); break;
-                case 'text':    this.setState({ text:  e.target.value }); break;
+                case 'type':        this.setState({ type: e.target.value });  break;
+                case 'text':        this.setState({ text: e.target.value }); break;
+                case 'category':    {
+                    var categoryName = e.target.options[e.target.selectedIndex].text;
+                    this.setState({category: e.target.value, categoryName: categoryName});
+                }  break;
             }
         }
+
         generate(seeds) {
+            function uniq(array){
+                let temp   = [], index = [];
+                let length = array.length;
+                for(let ii = 0; ii < length; ii++) {
+                    for(let jj = ii + 1; jj < length; jj++){
+                        if (array[ii] === array[jj]){
+                            ii++; jj = ii;
+                        }
+                    }
+                    temp.push(array[ii]);
+                    index.push(ii);
+                }
+                return temp;
+            }
+
             let names = [];
-            //seeds = _.uniq(seeds);
-            for (var head of seeds) {
-                for (var tail of seeds) {
+            seeds = uniq(seeds);
+            for (let head of seeds) {
+                for (let tail of seeds) {
                     names.push(head + tail);
                 }
             }
@@ -88,34 +162,39 @@
 
         handleSubmit(e) {
             e.preventDefault();
+            // 计
+            let timer = setInterval(() => {
+                this.setState({time: this.state.time + 1});
+            }, 1000);
+
+            let names = [];
             switch (this.state.type) {
-
+                case 'brand':   names.push(this.state.text);  break;
+                case 'words':   names = this.generate(this.state.text); break;
             }
-
-            var node=document.getElementById('brands');
-             var items = this.generate('在国有');
-             console.log(items);
-
-             var items = [ {name: '没没', items: [{company: 'ddd', no:'1212', status: '注册'}] },
-                 {name: '声所', items: [{company: 'ddd', no:'1212', status: '未注册'}, {company: 'cccc', no:'1212', status: '注册'}] }];
-             this.setState({items});
-/*
-            var textnode=document.createTextNode(data);
-            var entNode = document.createElement('br');
-            node.appendChild(entNode);
-            node.appendChild(textnode);
-*/
-            fetch(`http://localhost:3000/`,{
-                method: 'POST'
-            }).then(res => res.text()).then(
-                (data) => {
-                    var node=document.getElementById('brands');
-                    var textnode=document.createTextNode(data);
-                    var entNode = document.createElement('br');
-                    node.appendChild(entNode);
-                    node.appendChild(textnode);
-                    console.log(data);
+            if (!this.state.text) {
+                alert('内容不能为空');
+                throw '内容不能为空';
+            }
+            this.setState({count: names.length});
+            let items = [];
+            names.forEach((item) => {
+                fetch(`http://localhost:3000/`,{
+                    method: 'POST',
+                    body: JSON.stringify({category: this.state.category, categoryName: this.state.categoryName, name: item}),
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    }
+                }).then(res => res.json()).then((data) => {
+                    let item = JSON.stringify(data);
+                    items.push(JSON.parse(item));
+                    this.setState({items});
+                    if (this.state.count == items.length) {
+                        clearInterval(timer);//停止
+                    }
                 });
+            });
         }
     }
     ReactDOM.render(<BrandForm />, document.getElementById('example'));
@@ -123,4 +202,5 @@
 
 </body>
 </html>
+
 

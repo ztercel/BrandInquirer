@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="82a310ef-dd46-4309-8ef2-cd038e070dd6" name="localhost" url="http://localhost">
+        <fileTransfer port="0" mountedRoot="$PROJECT_DIR$/../../BrandInquirer" accessType="MOUNT" />
+      </webServer>
+    </option>
+  </component>
+</project>
