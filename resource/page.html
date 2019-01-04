@@ -179,7 +179,7 @@
             this.setState({count: names.length});
             let items = [];
             names.forEach((item) => {
-                fetch(`http://localhost:3000/`,{
+                fetch(`http://brand.laikoo.net/`,{
                     method: 'POST',
                     body: JSON.stringify({category: this.state.category, categoryName: this.state.categoryName, name: item}),
                     headers: {
