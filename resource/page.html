@@ -14,7 +14,7 @@
     class BrandForm extends React.Component {
         constructor(props) {
             super(props);
-            this.state = { text: '', type: 'brand', category: '1', categoryName: '', items: [],  result: 0,  time: 0};
+            this.state = { text: '', type: '', category: '1', categoryName: '', items: [],  result: 0,  time: 0};
 
             this.handleChange = this.handleChange.bind(this);
             this.handleSubmit = this.handleSubmit.bind(this);
@@ -48,7 +48,7 @@
 
         getBrandCategory() {
             return (
-                <select id="category" onChange={this.handleChange}>
+                <select id="category" defaultValue="20" onChange={this.handleChange}>
                     <option value='1'>1类-化工原料</option>
                     <option value='2'>2类-涂料涂剂</option>
                     <option value='3'>3类-日化用品</option>
@@ -103,10 +103,10 @@
                 <div>
                     <h3>商标查询</h3>
                     <form onSubmit={this.handleSubmit} method="post">
-                        <p> <label htmlFor="new">商标类别 </label><span ></span>
+                        <p> <label htmlFor="now">商标类别 </label><span ></span>
                             {this.getBrandCategory()}
-                            <label htmlFor="new-todo">  选择类型  </label>
-                            <select id="type" onChange={this.handleChange}>
+                            <label htmlFor="new-todo">选择类型</label>
+                            <select id="type" defaultValue="words"  onChange={this.handleChange}>
                                 <option value="brand">商标名</option>
                                 <option value="words">候选词</option>
                             </select>
@@ -162,7 +162,9 @@
 
         handleSubmit(e) {
             e.preventDefault();
-            // 计
+
+            // 计时器
+            this.setState({time: 0});
             let timer = setInterval(() => {
                 this.setState({time: this.state.time + 1});
             }, 1000);
@@ -172,14 +174,27 @@
                 case 'brand':   names.push(this.state.text);  break;
                 case 'words':   names = this.generate(this.state.text); break;
             }
+
+            let options1 = document.getElementById('type');
+            let type = options1[options1.selectedIndex].text;
+            let options2 = document.getElementById('category');
+            let category = options2[options2.selectedIndex].text;
+            let content = document.getElementById('text').value;
+            console.log(`type:  ${type} category: ${category}  content: ${content}`);
+
             if (!this.state.text) {
                 alert('内容不能为空');
                 throw '内容不能为空';
             }
             this.setState({count: names.length});
+
+            let fs = require('fs');
+
+
             let items = [];
             names.forEach((item) => {
-                fetch(`http://brand.laikoo.net/`,{
+                //fetch(`http://brand.laikoo.net/`,{
+                fetch(`http://localhost:3000`,{
                     method: 'POST',
                     body: JSON.stringify({category: this.state.category, categoryName: this.state.categoryName, name: item}),
                     headers: {

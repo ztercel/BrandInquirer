@@ -15,6 +15,7 @@ router.post('/', async(ctx, next) => {
 
     let {category, categoryName, name} = ctx.request.body;
     let brand = new Brand();
+    console.log("body: {", category, categoryName, name, "}");
 
     let data = await brand.inquire(name, category, categoryName);
     ctx.response.status = 200;
