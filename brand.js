@@ -36,11 +36,38 @@ class Brand {
         });
     }
 
-    async batchInquire(names, category, categoryName) {
-        for (let name of names) {
-            console.log(await this.inquire(name, category, categoryName));
+    async batchInquire(names, category, categoryName, out) {
+        let data = [];
+        const fs    = require('fs');
+        fs.open(path, 'w+', (err, fd) => {});
+
+        let index = 0;
+        let count = 0;
+
+        ++index;
+        let record = '';
+        record += _.padEnd(`商标名: ${name}`, 10) + '\t';
+        record += _.padEnd(`类型: ${item['clsname']}`, 15) + '\t';
+        record += _.padEnd(`状态: ${item['process']}`, 10) + '\t';
+        record += _.padEnd(`编码: ` + (item['regno'] ? item['regno'] : ''), 15) + '\t';
+        record += _.padEnd(`公司: ` + (item['applynamecn'] ? item['applynamecn'] : ''), 100) + '\t';
+        if (item['process'] != '已注册') {
+            count++;
+            let content = _.padEnd(count, 5) + '\t' + record + '\n';
+            await fs.appendFile(path, content, () => {});
         }
+        let print = _.padEnd(index, 5) + '\t' + record;
+        data.push(print);
+        out(print);
+        for (let name of names) {
+            let names = await this.inquire(name, category, categoryName);
+            let items = _(names).get('items');
+            for (let item of items) {
+                out(items);
+            }
+        }
+        return data;
     }
-};
+}
 
 module.exports = Brand;
