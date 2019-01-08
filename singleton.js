@@ -7,11 +7,11 @@ let brand = new Brand();
 
 function introduction(names, category, categoryName, path, LINE = 120) {
     console.log('-'.repeat(LINE));
-    console.log(`商标类型: ${categoryName}[${category}]`);
-    console.log(`搜索商标: ${names.length}\n[${names}]`);
+    console.log(`商标所属类型: ${categoryName}[${category}]`);
+    console.log(`需搜索商标名: ${names.length}个\n[${names}]`);
     console.log('-'.repeat(LINE));
     console.log(_.padStart("搜索中，慢慢等...", 60));
-    console.log(`搜索结果: ${path}`);
+    console.log(`搜索结果路径: ${path}`);
     console.log('='.repeat(LINE));
 }
 
@@ -32,6 +32,11 @@ function readSeeds(filePath) {
 function output(source, dstFile, posFile, tmpFile) {
     let index = 0;
     let count = 0;
+    if (fs.existsSync(posFile)) {
+        let pos = JSON.parse(fs.readFileSync(posFile).toString());
+        index = pos.index;
+        count = pos.count;
+    }
     return (item) => {
             let record = '';
             record += _.padEnd(`商标名: ${item['tradename']}`, 10) + '\t';
@@ -47,8 +52,7 @@ function output(source, dstFile, posFile, tmpFile) {
             }
             index++;
             let print = _.padEnd(index, 5) + '\t' + record;
-            let data = {name: item['tradename'], index, count};
-            console.log(data);
+            console.log(print);
 
             fs.writeFile(posFile, JSON.stringify({index, count}), ()=> {});
             fs.appendFile(tmpFile, item['tradename'] + ' ', () => {});
@@ -70,35 +74,39 @@ async function app() {
 
     let seeds = readSeeds(srcFile);
     if (seeds) {
-        console.log(`原始候选词: ${seeds.length} - [${seeds}]`);
+        console.log('*'.repeat(120));
+        console.log(`原始候选词: ${seeds.length}个\n[${seeds}]`);
         let result = named.named(seeds);
-        console.log(`有效候选词: ${result.seeds.length} - [${result.seeds}]`);
+        console.log(`有效候选词: ${result.seeds.length}个\n[${result.seeds}]`);
 
         // 保存候选词
         if (!fs.existsSync(tempDir)) {
             fs.mkdirSync(tempDir);
-            fs.writeFileSync(sdsFile, seeds);
         }
 
         // 本次运算的候选词有无发生变更
         if (fs.existsSync(sdsFile)) {
-            let sds = fs.readFileSync(sdsFile);
-            console.log(sds);
-
-            //delete temp 下的文件甲
+            let sds = fs.readFileSync(sdsFile).toString();
+            if (sds != seeds) {
+                fs.unlinkSync(sdsFile);
+                fs.unlinkSync(posFile);
+                fs.unlinkSync(tmpFile);
+            }
+        } else {
+            fs.writeFileSync(sdsFile, seeds);
         }
 
+        let searchNames = result.names;
         if (fs.existsSync(tmpFile)){
-            let array = fs.readFileSync(tmpFile);
-            console.log('---- 续算----');
+            let array = _.split(_.trim(fs.readFileSync(tmpFile).toString()), ' ');
+            searchNames = _.xor(array, result.names);
         }
 
         introduction(result.names, CATEGORY, CATENAME, dstFile);
-        await brand.batchSearch(result.names, CATEGORY, output(result.names, dstFile, posFile, tmpFile));
+        await brand.batchSearch(searchNames, CATEGORY, output(result.names, dstFile, posFile, tmpFile));
         epilogue();
     } else {
         console.log(`候选词不能为空, 检查文件: ${srcFile}`);
     }
 }
-
 app();
